@@ -1,8 +1,8 @@
 package com.mayi.rfid.nfcrfidreader;
 
 import android.content.Intent;
-import android.nfc.NfcAdapter;
 import android.nfc.Tag;
+import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
@@ -40,31 +40,26 @@ public class MainActivity extends AppCompatActivity {
         String action = intent.getAction();
 
         if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)) {
-            Toast.makeText(this,
-                    "onResume() - ACTION_TAG_DISCOVERED",
-                    Toast.LENGTH_SHORT).show();
 
             Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
             if (tag == null) {
                 textViewInfo.setText("tag == null");
             } else {
+                int i, j, in;
+                String [] hex = {"0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F"};
                 String tagInfo = tag.toString() + "\n";
-
-                tagInfo += "\nTag Id: \n";
                 byte[] tagId = tag.getId();
                 tagInfo += "length = " + tagId.length + "\n";
-                for (int i = 0; i < tagId.length; i++) {
-                    tagInfo += Integer.toHexString(tagId[i] & 0xFF) + " ";
-                }
-                tagInfo += "\n";
+                tagInfo += "Tag Id: ";
 
-                String[] techList = tag.getTechList();
-                tagInfo += "\nTech List\n";
-                tagInfo += "length = " + techList.length + "\n";
-                for (int i = 0; i < techList.length; i++) {
-                    tagInfo += techList[i] + "\n ";
+                for(j = 0 ; j < tagId.length ; ++j)
+                {
+                    in = (int) tagId[j] & 0xff;
+                    i = (in >> 4) & 0x0f;
+                    tagInfo += hex[i];
+                    i = in & 0x0f;
+                    tagInfo += hex[i];
                 }
-
                 textViewInfo.setText(tagInfo);
             }
         } else {
